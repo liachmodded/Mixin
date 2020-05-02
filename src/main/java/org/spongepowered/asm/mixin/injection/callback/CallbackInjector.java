@@ -397,6 +397,14 @@ public class CallbackInjector extends Injector {
                 throw new InvalidInjectionException(this.info, String.format("%s selector %s", ip, ex.getMessage()));
             }
             
+            if (this.cancellable) {
+                try {
+                    this.checkTargetForNode(target, injectionNode, ip.getCancellationRestriction(this.info));
+                } catch (InvalidInjectionException ex) {
+                    throw new InvalidInjectionException(this.info, String.format("%s selector (cancellable = true) %s", ip, ex.getMessage()));
+                }
+            }
+
             String id = ip.getId();
             if (Strings.isNullOrEmpty(id)) {
                 continue;

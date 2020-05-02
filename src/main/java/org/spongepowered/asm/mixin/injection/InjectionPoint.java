@@ -270,6 +270,18 @@ public abstract class InjectionPoint {
     }
 
     /**
+     * Returns the target restriction level for this injection point's cancellation for
+     * {@literal @Inject} annotations. This level defines whether an injection point
+     * can declare {@code cancellable = true}.
+     *
+     * @param context injection-specific context
+     * @return restriction level
+     */
+    public RestrictTargetLevel getCancellationRestriction(IInjectionPointContext context) {
+        return RestrictTargetLevel.METHODS_ONLY;
+    }
+
+    /**
      * Find injection points in the supplied insn list
      * 
      * @param desc Method descriptor, supplied to allow return types and

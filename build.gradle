@@ -156,6 +156,7 @@ dependencies {
     modlauncherCompile ('cpw.mods:modlauncher:4.2.0') {
         exclude module: 'log4j-core'
     }
+    modlauncherImplementation 'cpw.mods:grossjava9hacks:1.3.+'
     
     // agent
     agentCompile configurations.compile
