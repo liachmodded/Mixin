@@ -26,12 +26,16 @@ package org.spongepowered.asm.mixin.transformer;
 
 import java.util.Map.Entry;
 
+import jdk.internal.org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.injection.struct.InjectionInfo;
 import org.spongepowered.asm.mixin.injection.throwables.InvalidInjectionException;
 import org.spongepowered.asm.mixin.transformer.ClassInfo.Field;
 import org.spongepowered.asm.mixin.transformer.throwables.InvalidInterfaceMixinException;
+import org.spongepowered.asm.mixin.transformer.throwables.InvalidMixinException;
+import org.spongepowered.asm.util.Bytecode;
 
 /**
  * Applicator for interface mixins, mainly just disables things which aren't
@@ -94,30 +98,55 @@ class MixinApplicatorInterface extends MixinApplicatorStandard {
      *      #prepareInjections(
      *      org.spongepowered.asm.mixin.transformer.MixinTargetContext)
      */
-    @Override
-    protected void prepareInjections(MixinTargetContext mixin) {
-        // disabled for interface mixins
-        for (MethodNode method : this.targetClass.methods) {
-            try {
-                InjectionInfo injectInfo = InjectionInfo.parse(mixin, method);
-                if (injectInfo != null) {
-                    throw new InvalidInterfaceMixinException(mixin, injectInfo + " is not supported on interface mixin method " + method.name);
-                }
-            } catch (InvalidInjectionException ex) {
-                String description = ex.getInjectionInfo() != null ? ex.getInjectionInfo().toString() : "Injection";
-                throw new InvalidInterfaceMixinException(mixin, description + " is not supported in interface mixin");
-            }
-        }
-    }
+//    @Override
+//    protected void prepareInjections(MixinTargetContext mixin) {
+//        // disabled for interface mixins
+//        for (MethodNode method : this.targetClass.methods) {
+//            try {
+//                InjectionInfo injectInfo = InjectionInfo.parse(mixin, method);
+//                if (injectInfo != null) {
+//                    throw new InvalidInterfaceMixinException(mixin, injectInfo + " is not supported on interface mixin method " + method.name);
+//                }
+//            } catch (InvalidInjectionException ex) {
+//                String description = ex.getInjectionInfo() != null ? ex.getInjectionInfo().toString() : "Injection";
+//                throw new InvalidInterfaceMixinException(mixin, description + " is not supported in interface mixin");
+//            }
+//        }
+//    }
     
     /* (non-Javadoc)
      * @see org.spongepowered.asm.mixin.transformer.MixinApplicator
      *      #applyInjections(
      *      org.spongepowered.asm.mixin.transformer.MixinTargetContext)
      */
-    @Override
-    protected void applyInjections(MixinTargetContext mixin) {
-        // Do nothing
-    }
+//    @Override
+//    protected void applyInjections(MixinTargetContext mixin) {
+//         //Do nothing
+//    }
 
+
+    @Override
+    protected void checkMethodVisibility(MixinTargetContext mixin, MethodNode mixinMethod) {
+        //super.checkMethodVisibility(mixin, mixinMethod); //Remove public static check
+        if (Bytecode.hasFlag(mixinMethod, Opcodes.ACC_ABSTRACT)) {
+            throw new InvalidMixinException(mixin,
+                    String.format("Interface Mixin %s contains unimplemented method %s", mixin, mixinMethod));
+        }
+        if (!Bytecode.hasFlag(mixinMethod, Opcodes.ACC_PUBLIC)) {
+            if (MixinEnvironment.getCompatibilityLevel().isLessThan(MixinEnvironment.CompatibilityLevel.JAVA_9)) {
+                throw new InvalidMixinException(mixin,
+                        String.format("Interface Mixin %s contains non-public method %s", mixin, mixinMethod));
+            }
+            if (!Bytecode.hasFlag(mixinMethod, Opcodes.ACC_PRIVATE)) {
+                throw new InvalidMixinException(mixin,
+                        String.format("Interface Mixin %s contains non-public, non-private method %s", mixin, mixinMethod));
+            }
+        }
+        if (Bytecode.hasFlag(mixinMethod, Opcodes.ACC_STATIC)) {
+            if (MixinEnvironment.getCompatibilityLevel().isLessThan(MixinEnvironment.CompatibilityLevel.JAVA_8)) {
+                throw new InvalidMixinException(mixin,
+                        String.format("Interface Mixin %s contains static method %s", mixin, mixinMethod));
+            }
+        }
+    }
 }
