@@ -266,7 +266,7 @@ public abstract class InjectionPoint {
      * @return restriction level
      */
     public RestrictTargetLevel getTargetRestriction(IInjectionPointContext context) {
-        return RestrictTargetLevel.METHODS_ONLY;
+        return RestrictTargetLevel.CONSTRUCTORS_AFTER_DELEGATE;
     }
 
     /**
