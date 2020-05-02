@@ -266,7 +266,7 @@ public abstract class InjectionPoint {
      * @return restriction level
      */
     public RestrictTargetLevel getTargetRestriction(IInjectionPointContext context) {
-        return RestrictTargetLevel.CONSTRUCTORS_AFTER_DELEGATE;
+        return RestrictTargetLevel.CONSTRUCTORS_AFTER_DELEGATE; // Fabric change: allow inject in constructors
     }
 
     /**
@@ -277,6 +277,7 @@ public abstract class InjectionPoint {
      * @param context injection-specific context
      * @return restriction level
      */
+    // Fabric addition: prevent cancellation of inject in constructors
     public RestrictTargetLevel getCancellationRestriction(IInjectionPointContext context) {
         return RestrictTargetLevel.METHODS_ONLY;
     }

@@ -23,7 +23,7 @@ group = 'net.fabricmc'
 archivesBaseName = 'sponge-mixin'
 version = buildVersion
 
-ext.buildNumber = '0'
+ext.buildNumber = '571428'
 
 def ENV = System.getenv()
 if (ENV.BUILD_NUMBER) {
@@ -156,6 +156,8 @@ dependencies {
     modlauncherCompile ('cpw.mods:modlauncher:4.2.0') {
         exclude module: 'log4j-core'
     }
+    // Fabric: only exists in runtime elements in gradle module metadata of modlauncher,
+    // need to declare to compile against explicitly
     modlauncherImplementation 'cpw.mods:grossjava9hacks:1.3.+'
     
     // agent

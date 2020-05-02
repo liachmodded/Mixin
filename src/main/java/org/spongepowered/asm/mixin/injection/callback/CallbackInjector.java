@@ -397,6 +397,7 @@ public class CallbackInjector extends Injector {
                 throw new InvalidInjectionException(this.info, String.format("%s selector %s", ip, ex.getMessage()));
             }
             
+            // Fabric start: prevent cancellation in constructor injections
             if (this.cancellable) {
                 try {
                     this.checkTargetForNode(target, injectionNode, ip.getCancellationRestriction(this.info));
@@ -404,6 +405,7 @@ public class CallbackInjector extends Injector {
                     throw new InvalidInjectionException(this.info, String.format("%s selector (cancellable = true) %s", ip, ex.getMessage()));
                 }
             }
+            // Fabric end
 
             String id = ip.getId();
             if (Strings.isNullOrEmpty(id)) {
