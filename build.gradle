@@ -29,8 +29,7 @@ if (ENV.BUILD_NUMBER) {
     version = version + "-build." + "${ENV.BUILD_NUMBER}"
     ext.buildNumber = "${ENV.BUILD_NUMBER}"
 } else {
-	version = version + "-build.local"
-	ext.buildNumber = '0'
+    version = version + "+local"
 }
 
 // Extended project information
@@ -148,7 +147,7 @@ dependencies {
     launchwrapperCompile ('net.minecraft:launchwrapper:1.11') {
         exclude module: 'lwjgl'
     }
-    
+
     modlauncherCompile configurations.compile
     modlauncherImplementation configurations.implementation
     modlauncherCompile 'net.sf.jopt-simple:jopt-simple:5.0.4'
@@ -161,7 +160,7 @@ dependencies {
     // Fabric: only exists in runtime elements in gradle module metadata of modlauncher,
     // need to declare to compile against explicitly
     modlauncherImplementation 'cpw.mods:grossjava9hacks:1.3.+'
-    
+
     // agent
     agentCompile configurations.compile
     agentImplementation configurations.implementation
